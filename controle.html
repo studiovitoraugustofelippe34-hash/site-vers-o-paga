@@ -1,0 +1,761 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema de Controle de Funcionários</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #f1f4f9;
+    color: #263247;
+}
+
+header {
+    background: linear-gradient(135deg,#111827,#263b59);
+    color: white;
+    padding: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+header h1 { font-size: 23px; }
+header p { color: #cbd5e1; margin-top: 7px; }
+
+.relogio {
+    font-size: 25px;
+    font-weight: bold;
+    color: #38bdf8;
+}
+
+.container {
+    max-width: 1350px;
+    margin: auto;
+    padding: 25px;
+}
+
+.titulo { margin-bottom: 20px; }
+.titulo h2 { font-size: 25px; }
+.titulo p { color: #64748b; margin-top: 7px; }
+
+.indicadores {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(190px,1fr));
+    gap: 18px;
+    margin-bottom: 25px;
+}
+
+.card {
+    background: white;
+    padding: 22px;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px #0000000c;
+}
+
+.card span { color: #64748b; font-size: 14px; }
+.card h2 { font-size: 30px; margin-top: 12px; }
+
+.azul { border-left: 5px solid #2563eb; }
+.verde { border-left: 5px solid #16a34a; }
+.laranja { border-left: 5px solid #f97316; }
+.roxo { border-left: 5px solid #9333ea; }
+
+.painel {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 3px 12px #0000000c;
+}
+
+.painel h3 {
+    margin-bottom: 20px;
+    font-size: 19px;
+}
+
+.formulario {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(190px,1fr));
+    gap: 15px;
+}
+
+.campo label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 7px;
+    outline: none;
+    background: white;
+}
+
+input:focus, select:focus {
+    border-color: #2563eb;
+}
+
+button {
+    border: none;
+    border-radius: 7px;
+    padding: 11px 14px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.botao-principal {
+    background: #2563eb;
+    color: white;
+    margin-top: 20px;
+}
+
+.botao-principal:hover { background: #1d4ed8; }
+
+.btn-saida { background: #f97316; color: white; }
+.btn-retorno { background: #16a34a; color: white; }
+.btn-excluir { background: #dc2626; color: white; }
+.btn-excluir:hover { background: #991b1b; }
+
+.acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.busca {
+    max-width: 380px;
+    margin-bottom: 18px;
+}
+
+.tabela { overflow-x: auto; }
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 900px;
+}
+
+th, td {
+    padding: 14px;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 13px;
+}
+
+th {
+    background: #f8fafc;
+    color: #475569;
+}
+
+.status {
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.ativo { background: #dcfce7; color: #15803d; }
+.intervalo { background: #ffedd5; color: #c2410c; }
+.fora { background: #fee2e2; color: #b91c1c; }
+
+.turnos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(260px,1fr));
+    gap: 18px;
+    margin-bottom: 25px;
+}
+
+.turno-card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px #0000000c;
+    border-top: 5px solid #2563eb;
+}
+
+.turno-card h3 { margin-bottom: 12px; }
+
+.turno-card p {
+    color: #64748b;
+    margin: 7px 0;
+    font-size: 14px;
+}
+
+.vazio {
+    text-align: center;
+    padding: 25px;
+    color: #94a3b8;
+}
+
+footer {
+    background: #111827;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    margin-top: 30px;
+}
+
+@media(max-width:600px) {
+    header { padding: 20px; }
+    .container { padding: 15px; }
+    .relogio { font-size: 20px; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div>
+        <h1>🏢 Controle de Funcionários</h1>
+        <p>Sistema de Gestão de Horários e Turnos</p>
+    </div>
+    <div class="relogio" id="relogio">00:00:00</div>
+</header>
+
+<div class="container">
+
+    <div class="titulo">
+        <h2>📊 Painel Inicial</h2>
+        <p>Gerenciamento de funcionários, turnos e movimentações.</p>
+    </div>
+
+    <div class="indicadores">
+
+        <div class="card azul">
+            <span>Total de funcionários</span>
+            <h2 id="totalFuncionarios">0</h2>
+        </div>
+
+        <div class="card verde">
+            <span>Trabalhando</span>
+            <h2 id="trabalhando">0</h2>
+        </div>
+
+        <div class="card laranja">
+            <span>Em intervalo</span>
+            <h2 id="intervalo">0</h2>
+        </div>
+
+        <div class="card roxo">
+            <span>Movimentações hoje</span>
+            <h2 id="totalMovimentos">0</h2>
+        </div>
+
+    </div>
+
+    <!-- CADASTRO -->
+
+    <section class="painel">
+
+        <h3>➕ Cadastrar Funcionário</h3>
+
+        <form id="formFuncionario">
+
+            <div class="formulario">
+
+                <div class="campo">
+                    <label>Nome completo</label>
+                    <input type="text" id="nome"
+                    placeholder="Nome do funcionário" required>
+                </div>
+
+                <div class="campo">
+                    <label>Setor / Cargo</label>
+                    <input type="text" id="cargo"
+                    placeholder="Ex: Atendimento" required>
+                </div>
+
+                <div class="campo">
+                    <label>Turno</label>
+                    <select id="turno" required>
+                        <option value="">Selecione</option>
+                        <option value="1º Turno - Manhã">☀️ 1º Turno - Manhã</option>
+                        <option value="2º Turno - Tarde">🌤️ 2º Turno - Tarde</option>
+                        <option value="3º Turno - Noite">🌙 3º Turno - Noite</option>
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label>Horário de entrada</label>
+                    <input type="time" id="entrada" required>
+                </div>
+
+                <div class="campo">
+                    <label>Horário de saída</label>
+                    <input type="time" id="saida" required>
+                </div>
+
+            </div>
+
+            <button class="botao-principal" type="submit">
+                + Cadastrar Funcionário
+            </button>
+
+        </form>
+
+    </section>
+
+    <!-- PAINEL DE TURNOS -->
+
+    <h2 style="margin-bottom:18px;">📅 Funcionários por Turno</h2>
+
+    <div class="turnos">
+
+        <div class="turno-card">
+            <h3>☀️ 1º Turno - Manhã</h3>
+            <p>Funcionários: <strong id="turno1">0</strong></p>
+            <p>Trabalhando: <strong id="trabalho1">0</strong></p>
+            <p>Em intervalo: <strong id="intervalo1">0</strong></p>
+        </div>
+
+        <div class="turno-card" style="border-color:#f97316">
+            <h3>🌤️ 2º Turno - Tarde</h3>
+            <p>Funcionários: <strong id="turno2">0</strong></p>
+            <p>Trabalhando: <strong id="trabalho2">0</strong></p>
+            <p>Em intervalo: <strong id="intervalo2">0</strong></p>
+        </div>
+
+        <div class="turno-card" style="border-color:#9333ea">
+            <h3>🌙 3º Turno - Noite</h3>
+            <p>Funcionários: <strong id="turno3">0</strong></p>
+            <p>Trabalhando: <strong id="trabalho3">0</strong></p>
+            <p>Em intervalo: <strong id="intervalo3">0</strong></p>
+        </div>
+
+    </div>
+
+    <!-- FUNCIONÁRIOS -->
+
+    <section class="painel">
+
+        <h3>👥 Funcionários Cadastrados</h3>
+
+        <input class="busca" id="pesquisa"
+        placeholder="🔎 Pesquisar nome, cargo ou turno...">
+
+        <div class="tabela">
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Funcionário</th>
+                        <th>Cargo</th>
+                        <th>Turno</th>
+                        <th>Entrada</th>
+                        <th>Saída</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+
+                <tbody id="listaFuncionarios"></tbody>
+            </table>
+
+        </div>
+
+    </section>
+
+    <!-- HISTÓRICO -->
+
+    <section class="painel">
+
+        <h3>📋 Histórico de Horários e Saídas</h3>
+
+        <div class="tabela">
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Funcionário</th>
+                        <th>Turno</th>
+                        <th>Movimentação</th>
+                        <th>Data</th>
+                        <th>Horário</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+
+                <tbody id="listaHistorico"></tbody>
+            </table>
+
+        </div>
+
+    </section>
+
+</div>
+
+<footer>
+    Sistema de Controle de Funcionários © 2026
+</footer>
+
+<script>
+
+// ARMAZENAMENTO
+const CHAVE_FUNCIONARIOS = "controle_funcionarios_v2";
+const CHAVE_HISTORICO = "controle_historico_v2";
+
+let funcionarios = JSON.parse(
+    localStorage.getItem(CHAVE_FUNCIONARIOS) || "[]"
+);
+
+let historico = JSON.parse(
+    localStorage.getItem(CHAVE_HISTORICO) || "[]"
+);
+
+// SALVAR
+function salvarDados() {
+    localStorage.setItem(
+        CHAVE_FUNCIONARIOS,
+        JSON.stringify(funcionarios)
+    );
+
+    localStorage.setItem(
+        CHAVE_HISTORICO,
+        JSON.stringify(historico)
+    );
+}
+
+// DATA E HORÁRIO
+function agora() {
+    const d = new Date();
+
+    return {
+        data: d.toLocaleDateString("pt-BR"),
+        horario: d.toLocaleTimeString("pt-BR")
+    };
+}
+
+// RELÓGIO
+function atualizarRelogio() {
+    document.getElementById("relogio").textContent =
+        new Date().toLocaleTimeString("pt-BR");
+}
+
+setInterval(atualizarRelogio,1000);
+atualizarRelogio();
+
+// CADASTRAR
+document.getElementById("formFuncionario")
+.addEventListener("submit",function(e) {
+
+    e.preventDefault();
+
+    const funcionario = {
+        id: Date.now().toString(),
+        nome: document.getElementById("nome").value.trim(),
+        cargo: document.getElementById("cargo").value.trim(),
+        turno: document.getElementById("turno").value,
+        entrada: document.getElementById("entrada").value,
+        saida: document.getElementById("saida").value,
+        status: "Trabalhando"
+    };
+
+    funcionarios.push(funcionario);
+
+    salvarDados();
+    atualizarTela();
+
+    this.reset();
+
+    alert("Funcionário cadastrado com sucesso!");
+});
+
+// REGISTRAR MOVIMENTAÇÃO
+function registrar(id,tipo) {
+
+    const funcionario = funcionarios.find(f => f.id === id);
+
+    if (!funcionario) return;
+
+    if (tipo === "Saída para almoço") {
+
+        if (funcionario.status !== "Trabalhando") {
+            alert("O funcionário não está trabalhando.");
+            return;
+        }
+
+        funcionario.status = "Em intervalo";
+    }
+
+    if (tipo === "Retorno do almoço") {
+
+        if (funcionario.status !== "Em intervalo") {
+            alert("O funcionário não está em intervalo.");
+            return;
+        }
+
+        funcionario.status = "Trabalhando";
+    }
+
+    if (tipo === "Saída do expediente") {
+
+        if (funcionario.status !== "Trabalhando") {
+            alert("Finalize o intervalo antes de registrar a saída.");
+            return;
+        }
+
+        funcionario.status = "Fora do expediente";
+    }
+
+    if (tipo === "Retorno ao trabalho") {
+
+        if (funcionario.status !== "Fora do expediente") {
+            alert("O funcionário não está fora do expediente.");
+            return;
+        }
+
+        funcionario.status = "Trabalhando";
+    }
+
+    const horario = agora();
+
+    historico.unshift({
+        id: Date.now().toString(),
+        funcionarioId: id,
+        nome: funcionario.nome,
+        turno: funcionario.turno,
+        tipo: tipo,
+        data: horario.data,
+        horario: horario.horario
+    });
+
+    salvarDados();
+    atualizarTela();
+}
+
+// EXCLUIR FUNCIONÁRIO
+function excluirFuncionario(id) {
+
+    const funcionario = funcionarios.find(f => f.id === id);
+
+    if (!funcionario) return;
+
+    if (!confirm("Deseja excluir " + funcionario.nome + "?")) {
+        return;
+    }
+
+    funcionarios = funcionarios.filter(f => f.id !== id);
+
+    salvarDados();
+    atualizarTela();
+}
+
+// EXCLUIR HISTÓRICO
+function excluirHistorico(id) {
+
+    if (!confirm("Deseja excluir este registro?")) return;
+
+    historico = historico.filter(h => h.id !== id);
+
+    salvarDados();
+    atualizarTela();
+}
+
+// SEGURANÇA DE TEXTO
+function escapar(valor) {
+    return String(valor).replace(/[&<>"']/g, letra => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    })[letra]);
+}
+
+// ATUALIZAR PAINEL
+function atualizarTela() {
+
+    const pesquisa = document.getElementById("pesquisa")
+        .value.toLowerCase();
+
+    const lista = document.getElementById("listaFuncionarios");
+
+    lista.innerHTML = "";
+
+    const filtrados = funcionarios.filter(f =>
+        f.nome.toLowerCase().includes(pesquisa) ||
+        f.cargo.toLowerCase().includes(pesquisa) ||
+        (f.turno || "").toLowerCase().includes(pesquisa)
+    );
+
+    if (filtrados.length === 0) {
+        lista.innerHTML =
+        '<tr><td colspan="7" class="vazio">Nenhum funcionário encontrado.</td></tr>';
+    }
+
+    filtrados.forEach(f => {
+
+        let classe = "ativo";
+
+        if (f.status === "Em intervalo") classe = "intervalo";
+        if (f.status === "Fora do expediente") classe = "fora";
+
+        let botoes = "";
+
+        if (f.status === "Trabalhando") {
+
+            botoes = `
+                <button class="btn-saida"
+                onclick="registrar('${f.id}','Saída para almoço')">
+                Almoço
+                </button>
+
+                <button class="btn-saida"
+                onclick="registrar('${f.id}','Saída do expediente')">
+                Saída
+                </button>`;
+        }
+
+        if (f.status === "Em intervalo") {
+
+            botoes = `
+                <button class="btn-retorno"
+                onclick="registrar('${f.id}','Retorno do almoço')">
+                Retorno almoço
+                </button>`;
+        }
+
+        if (f.status === "Fora do expediente") {
+
+            botoes = `
+                <button class="btn-retorno"
+                onclick="registrar('${f.id}','Retorno ao trabalho')">
+                Retorno
+                </button>`;
+        }
+
+        lista.innerHTML += `
+            <tr>
+                <td>${escapar(f.nome)}</td>
+                <td>${escapar(f.cargo)}</td>
+                <td>${escapar(f.turno || "Não definido")}</td>
+                <td>${escapar(f.entrada)}</td>
+                <td>${escapar(f.saida)}</td>
+                <td>
+                    <span class="status ${classe}">
+                        ${escapar(f.status)}
+                    </span>
+                </td>
+                <td>
+                    <div class="acoes">
+                        ${botoes}
+                        <button class="btn-excluir"
+                        onclick="excluirFuncionario('${f.id}')">
+                        Excluir
+                        </button>
+                    </div>
+                </td>
+            </tr>`;
+    });
+
+    atualizarHistorico();
+    atualizarIndicadores();
+    atualizarTurnos();
+}
+
+// INDICADORES
+function atualizarIndicadores() {
+
+    document.getElementById("totalFuncionarios").textContent =
+        funcionarios.length;
+
+    document.getElementById("trabalhando").textContent =
+        funcionarios.filter(f => f.status === "Trabalhando").length;
+
+    document.getElementById("intervalo").textContent =
+        funcionarios.filter(f => f.status === "Em intervalo").length;
+
+    const hoje = agora().data;
+
+    document.getElementById("totalMovimentos").textContent =
+        historico.filter(h => h.data === hoje).length;
+}
+
+// INDICADORES POR TURNO
+function atualizarTurnos() {
+
+    const turnos = [
+        "1º Turno - Manhã",
+        "2º Turno - Tarde",
+        "3º Turno - Noite"
+    ];
+
+    turnos.forEach((turno,index) => {
+
+        const grupo = funcionarios.filter(f => f.turno === turno);
+
+        const numero = index + 1;
+
+        document.getElementById("turno" + numero).textContent =
+            grupo.length;
+
+        document.getElementById("trabalho" + numero).textContent =
+            grupo.filter(f => f.status === "Trabalhando").length;
+
+        document.getElementById("intervalo" + numero).textContent =
+            grupo.filter(f => f.status === "Em intervalo").length;
+    });
+}
+
+// HISTÓRICO
+function atualizarHistorico() {
+
+    const tabela = document.getElementById("listaHistorico");
+
+    tabela.innerHTML = "";
+
+    if (historico.length === 0) {
+
+        tabela.innerHTML =
+        '<tr><td colspan="6" class="vazio">Nenhuma movimentação registrada.</td></tr>';
+
+        return;
+    }
+
+    historico.forEach(h => {
+
+        tabela.innerHTML += `
+            <tr>
+                <td>${escapar(h.nome)}</td>
+                <td>${escapar(h.turno || "Não definido")}</td>
+                <td>${escapar(h.tipo)}</td>
+                <td>${escapar(h.data)}</td>
+                <td>${escapar(h.horario)}</td>
+                <td>
+                    <button class="btn-excluir"
+                    onclick="excluirHistorico('${h.id}')">
+                    Excluir
+                    </button>
+                </td>
+            </tr>`;
+    });
+}
+
+// PESQUISA
+document.getElementById("pesquisa")
+.addEventListener("input",atualizarTela);
+
+// INICIAR SISTEMA
+atualizarTela();
+
+</script>
+
+</body>
+</html>

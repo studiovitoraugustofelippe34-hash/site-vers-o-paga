@@ -1,0 +1,281 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Login Administrativo</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg,#101827,#263b59);
+    padding: 20px;
+}
+
+.login {
+    background: white;
+    width: 100%;
+    max-width: 420px;
+    padding: 40px 30px;
+    border-radius: 16px;
+    box-shadow: 0 15px 45px #00000040;
+}
+
+.logo {
+    text-align: center;
+    font-size: 55px;
+    margin-bottom: 15px;
+}
+
+h1 {
+    text-align: center;
+    color: #17243a;
+    font-size: 25px;
+    margin-bottom: 10px;
+}
+
+.subtitulo {
+    text-align: center;
+    color: #64748b;
+    font-size: 14px;
+    margin-bottom: 30px;
+}
+
+.campo {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    color: #334155;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+input {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    outline: none;
+    font-size: 15px;
+}
+
+input:focus {
+    border-color: #2563eb;
+}
+
+.senha {
+    position: relative;
+}
+
+.senha input {
+    padding-right: 48px;
+}
+
+.mostrar {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 20px;
+    user-select: none;
+}
+
+button {
+    width: 100%;
+    padding: 15px;
+    background: #2563eb;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: .3s;
+}
+
+button:hover {
+    background: #1d4ed8;
+}
+
+.btn-suporte {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    margin-top: 12px;
+    background: #16a34a;
+    border-radius: 8px;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: bold;
+    transition: .3s;
+}
+
+.btn-suporte:hover {
+    background: #15803d;
+}
+
+.erro {
+    color: #dc2626;
+    background: #fee2e2;
+    padding: 12px;
+    border-radius: 7px;
+    margin-bottom: 15px;
+    font-size: 13px;
+    text-align: center;
+    display: none;
+}
+
+footer {
+    text-align: center;
+    margin-top: 25px;
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="login">
+
+    <div class="logo">🔐</div>
+
+    <h1>Área Administrativa</h1>
+
+    <p class="subtitulo">
+        Sistema de Controle de Funcionários
+    </p>
+
+    <form id="formLogin">
+
+        <div class="campo">
+            <label for="administrador">
+                Nome do Administrador
+            </label>
+
+            <input
+                type="text"
+                id="administrador"
+                placeholder="Digite seu nome"
+                autocomplete="username"
+                required
+            >
+        </div>
+
+        <div class="campo">
+            <label for="senha">
+                Senha de acesso
+            </label>
+
+            <div class="senha">
+
+                <input
+                    type="password"
+                    id="senha"
+                    placeholder="Digite sua senha"
+                    autocomplete="current-password"
+                    required
+                >
+
+                <span class="mostrar" id="mostrarSenha">
+                    👁️
+                </span>
+
+            </div>
+        </div>
+
+        <div class="erro" id="mensagemErro">
+            Nome ou senha incorretos!
+        </div>
+
+        <button type="submit">
+            ENTRAR NO SISTEMA →
+        </button>
+
+    </form>
+
+    <!-- BOTÃO DE SUPORTE -->
+    <a href="./suporte.html" class="btn-suporte">
+        🛠️ ACESSAR SUPORTE
+    </a>
+
+    <footer>
+        Sistema Administrativo © 2026
+        <br><br>
+        Acesso restrito ao administrador
+    </footer>
+
+</div>
+
+<script>
+
+// DADOS DE ACESSO
+const NOME_ADMIN = "ADMINISTRADOR";
+const SENHA_ADMIN = "123456";
+
+// VISUALIZAR SENHA
+document.getElementById("mostrarSenha")
+.addEventListener("click", function() {
+
+    const campo = document.getElementById("senha");
+
+    if (campo.type === "password") {
+        campo.type = "text";
+        this.textContent = "🙈";
+    } else {
+        campo.type = "password";
+        this.textContent = "👁️";
+    }
+
+});
+
+// VALIDAR LOGIN
+document.getElementById("formLogin")
+.addEventListener("submit", function(e) {
+
+    e.preventDefault();
+
+    const nome = document.getElementById("administrador")
+        .value.trim().toUpperCase();
+
+    const senha = document.getElementById("senha").value;
+
+    const mensagemErro = document.getElementById("mensagemErro");
+
+    if (nome === NOME_ADMIN && senha === SENHA_ADMIN) {
+
+        sessionStorage.setItem("acesso_autorizado", "true");
+
+        window.location.href = "./controle.html";
+
+    } else {
+
+        mensagemErro.style.display = "block";
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>
